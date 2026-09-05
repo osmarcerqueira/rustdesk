@@ -9,6 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install LLVM/Clang
+        run: choco install llvm -y
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -19,9 +22,12 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install flutter_rust_bridge_codegen --version 1.80.1
+
       - name: Build Windows Executable
         run: |
-          cargo build --release
+          flutter pub get
           flutter build windows --release
 
       - name: Upload Artifact
