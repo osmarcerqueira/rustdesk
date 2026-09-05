@@ -48,10 +48,10 @@ env:
   VERSION: "1.5.0"
   NDK_VERSION: "r28c"
   #signing keys env variable checks
-  ANDROID_SIGNING_KEY: "${{ secrets.ANDROID_SIGNING_KEY }}"
-  MACOS_P12_BASE64: "${{ secrets.MACOS_P12_BASE64 }}"
+  #ANDROID_SIGNING_KEY: "${{ secrets.ANDROID_SIGNING_KEY }}"
+  #MACOS_P12_BASE64: "${{ secrets.MACOS_P12_BASE64 }}"
   UPLOAD_ARTIFACT: "${{ inputs.upload-artifact }}"
-  SIGN_BASE_URL: "${{ secrets.SIGN_BASE_URL }}-2"
+  #SIGN_BASE_URL: "${{ secrets.SIGN_BASE_URL }}-2"
 
 jobs:
   generate-sbom:
@@ -358,7 +358,7 @@ jobs:
         shell: bash
         run: |
           pip3 install requests argparse
-          BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./rustdesk/
+         #BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./rustdesk/
 
       - name: Build self-extracted executable
         shell: bash
@@ -768,9 +768,9 @@ jobs:
         if: env.MACOS_P12_BASE64 != null
         uses: apple-actions/import-codesign-certs@253ddeeac23f2bdad1646faac5c8c2832e800071 # v1
         with:
-          p12-file-base64: ${{ secrets.MACOS_P12_BASE64 }}
-          p12-password: ${{ secrets.MACOS_P12_PASSWORD }}
-          keychain: rustdesk
+         #p12-file-base64: ${{ secrets.MACOS_P12_BASE64 }}
+         #p12-password: ${{ secrets.MACOS_P12_PASSWORD }}
+         #keychain: rustdesk
 
       - name: Check sign and import sign key
         if: env.MACOS_P12_BASE64 != null
