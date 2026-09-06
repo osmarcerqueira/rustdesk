@@ -50,13 +50,9 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/ndk_compat_build
           cd $GITHUB_WORKSPACE/ndk_compat_build
-          
-          # Compila o stub nativo em C para gerar a biblioteca estatica libndk_compat.a
           echo 'void ndk_compat_dummy() {}' > dummy.c
           $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang -c dummy.c -o dummy.o
           $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar rcs libndk_compat.a dummy.o
-          
-          echo "libndk_compat.a criada com sucesso em $GITHUB_WORKSPACE/ndk_compat_build"
         env:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
 
@@ -80,7 +76,9 @@ jobs:
       - name: Build Flutter APK
         run: |
           cd flutter
-          flutter build apk --release --target-platform android-arm64
+          flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
+        env:
+          GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m -Dorg.gradle.daemon=false"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
