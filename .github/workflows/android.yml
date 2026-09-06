@@ -38,6 +38,20 @@ jobs:
           cargo install cargo-ndk
           cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
 
+      - name: Build ndk_compat C++ library
+        run: |
+          mkdir -p libs/ndk_compat/build
+          cd libs/ndk_compat/build
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-21
+          make
+          mkdir -p ../lib/aarch64-linux-android
+          cp libndk_compat.a ../lib/aarch64-linux-android/
+        env:
+          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
+
       - name: Install vcpkg dependencies for Android
         run: |
           git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
@@ -61,7 +75,6 @@ jobs:
         env:
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
-          RUSTFLAGS: "-L ${{ github.workspace }}/target/aarch64-linux-android/release/deps"
 
       - name: Build Flutter APK
         run: |
