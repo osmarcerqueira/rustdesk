@@ -46,9 +46,14 @@ jobs:
         env:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
 
+      - name: Install Flutter dependencies
+        run: |
+          cd flutter
+          flutter pub get
+
       - name: Generate Flutter Rust Bridge code
         run: |
-          flutter_rust_bridge_codegen --rust-input src/flutter_ffi.rs --dart-output flutter/lib/generated_bridge.dart
+          flutter_rust_bridge_codegen --rust-input src/flutter_ffi.rs --dart-output flutter/lib/generated_bridge.dart --skip-deps-check
 
       - name: Build Android NDK libs
         run: |
@@ -60,7 +65,6 @@ jobs:
       - name: Build Flutter APK
         run: |
           cd flutter
-          flutter pub get
           flutter build apk --release --target-platform android-arm64
 
       - name: Upload APK Artifact
