@@ -38,25 +38,26 @@ jobs:
           cargo install cargo-ndk
           cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
 
-      - name: Build ndk_compat C++ library
-        run: |
-          mkdir -p libs/ndk_compat/build
-          cd libs/ndk_compat/build
-          cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI=arm64-v8a \
-            -DANDROID_PLATFORM=android-21
-          make
-          mkdir -p ../lib/aarch64-linux-android
-          cp libndk_compat.a ../lib/aarch64-linux-android/
-        env:
-          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
-
       - name: Install vcpkg dependencies for Android
         run: |
           git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
           $GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh
           $GITHUB_WORKSPACE/vcpkg/vcpkg install --classic libvpx libyuv opus aom --triplet arm64-android
+        env:
+          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
+
+      - name: Build ndk_compat library
+        run: |
+          if [ -d "ndk_compat" ]; then
+            cd ndk_compat
+            mkdir -p build && cd build
+            cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21
+            make
+            mkdir -p ../lib/aarch64-linux-android
+            cp libndk_compat.a ../lib/aarch64-linux-android/
+          else
+            echo "Pasta ndk_compat nao encontrada na raiz, prosseguindo com build padrão do cargo..."
+          fi
         env:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
 
