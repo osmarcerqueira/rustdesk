@@ -37,10 +37,10 @@ jobs:
           sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653" "build-tools;33.0.2"
           cargo install cargo-ndk
 
-      - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgGitCommitId: '501db0f17ef6ed18fcd9f38bde7b401211e26327'
+      - name: Clone vcpkg directly
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
+          $GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh
 
       - name: Build Android NDK libs
         run: |
