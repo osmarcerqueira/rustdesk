@@ -32,10 +32,11 @@ jobs:
         with:
           targets: aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
 
-      - name: Install Android NDK & cargo-ndk
+      - name: Install Android NDK & cargo tools
         run: |
           sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653" "build-tools;33.0.2"
           cargo install cargo-ndk
+          cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
 
       - name: Install vcpkg dependencies for Android
         run: |
@@ -45,9 +46,13 @@ jobs:
         env:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
 
+      - name: Generate Flutter Rust Bridge code
+        run: |
+          flutter_rust_bridge_codegen --rust-input src/flutter_ffi.rs --dart-output flutter/lib/generated_bridge.dart
+
       - name: Build Android NDK libs
         run: |
-          cargo ndk -t arm64-v8a -o flutter/android/app/src/main/jniLibs/ build --release
+          cargo ndk -t arm64-v8a -o flutter/android/app/src/main/jniLibs/ build --release --features flutter
         env:
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
