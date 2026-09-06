@@ -37,9 +37,16 @@ jobs:
           sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653" "build-tools;33.0.2"
           cargo install cargo-ndk
 
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: '501db0f17ef6ed18fcd9f38bde7b401211e26327'
+
       - name: Build Android NDK libs
         run: |
           cargo ndk -t arm64-v8a -o flutter/android/app/src/main/jniLibs/ build --release
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
 
       - name: Build Flutter APK
         run: |
