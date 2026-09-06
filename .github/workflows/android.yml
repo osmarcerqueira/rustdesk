@@ -41,7 +41,7 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
           $GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh
-          $GITHUB_WORKSPACE/vcpkg/vcpkg install libvpx libyuv opus --triplet arm64-android
+          $GITHUB_WORKSPACE/vcpkg/vcpkg install --classic libvpx libyuv opus --triplet arm64-android
         env:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
 
