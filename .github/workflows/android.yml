@@ -76,9 +76,9 @@ jobs:
       - name: Build Flutter APK
         run: |
           cd flutter
-          flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
+          flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons --extra-front-end-options=--no-g3
         env:
-          GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m -Dorg.gradle.daemon=false"
+          GRADLE_OPTS: "-Xmx6g -XX:+UseG1GC -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
