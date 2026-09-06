@@ -28,21 +28,17 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+          targets: aarch64-linux-android
 
       - name: Install Android NDK
         run: |
           sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653"
 
-      - name: Build Rust Native Libraries
-        run: |
-          python3 build.py --android
-
       - name: Build Flutter APK
         run: |
           cd flutter
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --target-platform android-arm64
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
