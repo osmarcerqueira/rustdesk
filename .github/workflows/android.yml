@@ -86,7 +86,7 @@ jobs:
       - name: Build Flutter APK
         run: |
           cd flutter
-          flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
+          flutter build apk --debug --target-platform android-arm64 --no-tree-shake-icons
         env:
           GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
@@ -94,4 +94,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SoulInformatica-Android-APK
-          path: flutter/build/app/outputs/flutter-apk/app-release.apk
+          path: flutter/build/app/outputs/flutter-apk/app-debug.apk
