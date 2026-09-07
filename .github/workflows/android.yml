@@ -73,12 +73,22 @@ jobs:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
           RUSTFLAGS: "-L ${{ github.workspace }}/ndk_compat_build"
 
+      - name: Configure Gradle Memory Properties
+        run: |
+          cat <<EOF >> flutter/android/gradle.properties
+          org.gradle.jvmargs=-Xmx3584m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC
+          org.gradle.daemon=false
+          org.gradle.parallel=false
+          android.enableR8.fullMode=false
+          android.web.implicitSignatures=false
+          EOF
+
       - name: Build Flutter APK
         run: |
           cd flutter
           flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons
         env:
-          GRADLE_OPTS: "-Xmx6g -XX:+UseG1GC -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
