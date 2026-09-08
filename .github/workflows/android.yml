@@ -73,6 +73,16 @@ jobs:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
           RUSTFLAGS: "-L ${{ github.workspace }}/ndk_compat_build"
 
+      - name: Decode Keystore & Configure key.properties
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > flutter/android/app/soul-release-key.jks
+          cat <<EOF > flutter/android/key.properties
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=soul-release-key.jks
+          EOF
+
       - name: Configure Gradle Memory Properties
         run: |
           cat <<EOF >> flutter/android/gradle.properties
@@ -80,18 +90,17 @@ jobs:
           org.gradle.daemon=false
           org.gradle.parallel=false
           android.enableR8.fullMode=false
-          android.web.implicitSignatures=false
           EOF
 
-      - name: Build Flutter APK
+      - name: Build Flutter APK (Release)
         run: |
           cd flutter
-          flutter build apk --debug --target-platform android-arm64 --no-tree-shake-icons
+          flutter build apk --release --target-platform android-arm64 --split-per-abi --no-tree-shake-icons
         env:
           GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SoulInformatica-Android-APK
-          path: flutter/build/app/outputs/flutter-apk/app-debug.apk
+          name: SoulInformatica-Android-APK-Release
+          path: flutter/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
